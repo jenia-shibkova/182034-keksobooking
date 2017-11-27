@@ -57,34 +57,38 @@ var generateOffers = function (data) {
     return (number < 10) ? '0' + number : number;
   };
 
+  var getOfferObject = function (index) {
+    var newArrayOfTitles = shuffleArrayOfTitles(data.title);
+    var locationX = getRandomInteger(300, 900);
+    var locationY = getRandomInteger(100, 500);
+    return {
+      author: {
+        avatar: 'img/avatars/user' + getNumberLeadingZero(index + 1) + '.png'
+      },
+      offer: {
+        title: newArrayOfTitles[index],
+        address: locationX + ', ' + locationY,
+        price: getRandomInteger(1000, 1000000),
+        type: getRandomElement(data.type),
+        rooms: getRandomInteger(1, 5),
+        guests: getRandomInteger(1, 10),
+        checkIn: getRandomElement(data.checkIn),
+        checkOut: getRandomElement(data.checkOut),
+        features: makeRandomArray(data.features),
+        description: '',
+        photos: []
+      },
+      location: {
+        x: locationX + 'px',
+        y: locationY + 'px'
+      }
+    };
+  };
+
   var makeListOfOffers = function () {
     var listOfOffers = [];
-    var newArrayOfTitles = shuffleArrayOfTitles(data.title);
     for (var i = 0; i < data.countOfOffers; i++) {
-      var locationX = getRandomInteger(300, 900);
-      var locationY = getRandomInteger(100, 500);
-      listOfOffers[i] = {
-        author: {
-          avatar: 'img/avatars/user' + getNumberLeadingZero(i + 1) + '.png'
-        },
-        offer: {
-          title: newArrayOfTitles[i],
-          address: locationX + ', ' + locationY,
-          price: getRandomInteger(1000, 1000000),
-          type: getRandomElement(data.type),
-          rooms: getRandomInteger(1, 5),
-          guests: getRandomInteger(1, 10),
-          checkIn: getRandomElement(data.checkIn),
-          checkOut: getRandomElement(data.checkOut),
-          features: makeRandomArray(data.features),
-          description: '',
-          photos: []
-        },
-        location: {
-          x: locationX + 'px',
-          y: locationY + 'px'
-        }
-      };
+      listOfOffers.push(getOfferObject(i));
     }
     return listOfOffers;
   };
@@ -156,7 +160,7 @@ var generateOffers = function (data) {
     return offerElement;
   };
 
-  var listOfOffers = makeListOfOffers();
+  var listOfOffers = makeListOfOffers(8);
   pinToMap(listOfOffers);
   tokyoMap.appendChild(createCard(listOfOffers[0]));
 
