@@ -1,5 +1,9 @@
 'use strict';
 
+var ESC_KEYCODE = 27;
+var ENTER_KEYCODE = 13;
+var PIN_ACTIVE = 'map__pin--active';
+
 var DATA = {
   countOfOffers: 8,
   title: [
@@ -81,7 +85,8 @@ var generateOffers = function (data) {
       location: {
         x: locationX + 'px',
         y: locationY + 'px'
-      }
+      },
+      offerId: 'map__pin-' + index
     };
   };
 
@@ -98,16 +103,27 @@ var generateOffers = function (data) {
     pin.style.left = offer.location.x;
     pin.style.top = offer.location.y;
     pin.querySelector('img').setAttribute('src', offer.author.avatar);
+    pin.id = offer.offerId;
     return pin;
   };
 
   var pinToMap = function (listOfOffers) {
     var fragmentPins = document.createDocumentFragment();
     for (var i = 0; i < listOfOffers.length; i++) {
-      tokyoMap.appendChild(makePin(listOfOffers[i]));
       fragmentPins.appendChild(makePin(listOfOffers[i]));
     }
     tokyoMap.appendChild(fragmentPins);
+
+    var pins = tokyoMap.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    pins.forEach(function (pin) {
+      pin.addEventListener('click', openCard);
+      pin.addEventListener('keydown', function (evt) {
+        if (onEnterPress(evt)) {
+          openCard(evt);
+        }
+      });
+    });
   };
 
   var createFeatures = function (features) {
@@ -134,7 +150,6 @@ var generateOffers = function (data) {
   };
 
   var tokyoMap = document.querySelector('.map');
-  tokyoMap.classList.remove('map--faded');
 
   var similarOfferTemplate = document.querySelector('#lodge-template').content;
   var createCard = function (listOfOffers) {
@@ -160,10 +175,90 @@ var generateOffers = function (data) {
     return offerElement;
   };
 
-  var listOfOffers = makeListOfOffers(8);
-  pinToMap(listOfOffers);
-  tokyoMap.appendChild(createCard(listOfOffers[0]));
+  var mainPin = document.querySelector('.map__pin--main');
+  var form = document.querySelector('.notice__form');
+  var fieldsets = form.querySelectorAll('fieldset');
 
+
+  var popup = similarOfferTemplate.querySelector('.popup');
+  var closeButton = popup.querySelector('.popup__close');
+
+  var pinElements = document.getElementsByClassName('map__pin');
+  var currentPin = null;
+  var pinOffer = {};
+
+
+  var setAttributeDisabled = function () {
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].setAttribute('disabled', 'disabled');
+    }
+  };
+
+  var removeAttributeDisabled = function () {
+    for (var i = 0; i < fieldsets.length; i++) {
+      fieldsets[i].removeAttribute('disabled');
+    }
+  };
+
+  var activateMap = function (evt) {
+
+    if (mainPin === evt.currentTarget) {
+      tokyoMap.classList.remove('map--faded');
+      form.classList.remove('notice__form--disabled');
+      removeAttributeDisabled();
+
+      var listOfOffers = makeListOfOffers(8);
+      pinToMap(listOfOffers);
+      for (var i = 0; i < pinElements.length; i++) {
+        pinOffer['map__pin-' + i] = listOfOffers[i];
+        pinElements[i].addEventListener('click', openCard);
+        pinElements[i].addEventListener('keydown', function openPopup() {
+          if (onEnterPress(evt)) {
+            openCard(evt);
+          }
+        });
+      }
+      mainPin.removeEventListener('mouseup', activateMap);
+    }
+  };
+
+
+  closeButton.addEventListener('click', function () {
+    // alert('Hello button');
+  });
+
+  var onPopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      evt.preventDefault();
+      closePopup();
+    }
+  };
+
+  var onEnterPress = function (evt) {
+    return evt.keyCode === ENTER_KEYCODE;
+  };
+
+  var closePopup = function () {
+    popup.style.display = 'hidden';
+    currentPin.classList.remove(PIN_ACTIVE);
+    document.addEventListener('keydown', onPopupEscPress);
+  };
+
+  var openCard = function (evt) {
+    if (currentPin) {
+      currentPin.classList.remove(PIN_ACTIVE);
+    }
+    currentPin = evt.currentTarget;
+    var offer = pinOffer[currentPin.id];
+    currentPin.classList.add(PIN_ACTIVE);
+
+    tokyoMap.appendChild(createCard(offer));
+    document.addEventListener('keydown', onPopupEscPress);
+  };
+
+  closeButton.addEventListener('click', closePopup);
+  setAttributeDisabled();
+  mainPin.addEventListener('mouseup', activateMap);
 };
 
 generateOffers(DATA);
