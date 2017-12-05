@@ -222,11 +222,6 @@ var generateOffers = function (data) {
     }
   };
 
-
-  closeButton.addEventListener('click', function () {
-    // alert('Hello button');
-  });
-
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
       evt.preventDefault();

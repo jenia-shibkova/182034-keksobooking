@@ -120,6 +120,11 @@ textarea:focus
     clip-path: inset(100%);
 }
 
+.invalid
+{
+    box-shadow: inset 0 0 0 2px #e61515;
+}
+
 .features
 {
     white-space: nowrap;
