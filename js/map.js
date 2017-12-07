@@ -98,34 +98,6 @@ var generateOffers = function (data) {
     return listOfOffers;
   };
 
-  var makePin = function (offer) {
-    var pin = document.querySelector('#lodge-template').content.querySelector('.map__pin').cloneNode(true);
-    pin.style.left = offer.location.x;
-    pin.style.top = offer.location.y;
-    pin.querySelector('img').setAttribute('src', offer.author.avatar);
-    pin.id = offer.offerId;
-    return pin;
-  };
-
-  var pinToMap = function (listOfOffers) {
-    var fragmentPins = document.createDocumentFragment();
-    for (var i = 0; i < listOfOffers.length; i++) {
-      fragmentPins.appendChild(makePin(listOfOffers[i]));
-    }
-    tokyoMap.appendChild(fragmentPins);
-
-    var pins = tokyoMap.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    pins.forEach(function (pin) {
-      pin.addEventListener('click', openCard);
-      pin.addEventListener('keydown', function (evt) {
-        if (onEnterPress(evt)) {
-          openCard(evt);
-        }
-      });
-    });
-  };
-
   var createFeatures = function (features) {
     var fragmentFeatures = document.createDocumentFragment();
     for (var i = 0; i < features.length; i++) {
@@ -152,11 +124,34 @@ var generateOffers = function (data) {
   var tokyoMap = document.querySelector('.map');
 
   var similarOfferTemplate = document.querySelector('#lodge-template').content;
+
+  var onPopupEscPress = function (evt) {
+    if (evt.keyCode === ESC_KEYCODE) {
+      evt.preventDefault();
+      closePopup();
+    }
+  };
+
+  var closePopup = function () {
+    var oldPopup = tokyoMap.querySelector('.popup');
+    if (oldPopup !== null) {
+      tokyoMap.removeChild(oldPopup);
+    }
+    if (currentPin) {
+      currentPin.classList.remove(PIN_ACTIVE);
+      currentPin = null;
+    }
+    document.removeEventListener('keydown', onPopupEscPress);
+  };
+
   var createCard = function (listOfOffers) {
     var offerElement = similarOfferTemplate.cloneNode(true);
     var offer = listOfOffers.offer;
     var author = listOfOffers.author;
     var allFeatures = listOfOffers.offer.features;
+    var popup = offerElement.querySelector('.popup');
+    var popupBtnClose = popup.querySelector('.popup__close');
+
     offerElement.querySelector('.map__card h3').textContent = offer.title;
     offerElement.querySelector('.map__card p:nth-of-type(1) small').textContent = offer.address;
     offerElement.querySelector('.popup__price').textContent = offer.price + '₽' + '/ночь';//
@@ -172,21 +167,61 @@ var generateOffers = function (data) {
 
     offerElement.querySelector('.map__card p:nth-of-type(5)').textContent = offer.description;
     offerElement.querySelector('img').setAttribute('src', author.avatar);
+
+    popupBtnClose.addEventListener('click', closePopup);
+
     return offerElement;
+  };
+
+  var appendCard = function (evt) {
+    closePopup();
+    if (evt.currentTarget === mainPin || currentPin === evt.currentTarget) {
+      return;
+    } else {
+      currentPin = evt.currentTarget;
+    }
+
+    var offerElement = createCard(pinOffer[currentPin.id]);
+    tokyoMap.appendChild(offerElement);
+    currentPin.classList.add(PIN_ACTIVE);
+    document.addEventListener('keydown', onPopupEscPress);
   };
 
   var mainPin = document.querySelector('.map__pin--main');
   var form = document.querySelector('.notice__form');
   var fieldsets = form.querySelectorAll('fieldset');
 
-
-  var popup = similarOfferTemplate.querySelector('.popup');
-  var closeButton = popup.querySelector('.popup__close');
-
   var pinElements = document.getElementsByClassName('map__pin');
   var currentPin = null;
   var pinOffer = {};
 
+  var makePin = function (offer) {
+    var pin = document.querySelector('#lodge-template').content.querySelector('.map__pin').cloneNode(true);
+    pin.style.left = offer.location.x;
+    pin.style.top = offer.location.y;
+    pin.querySelector('img').setAttribute('src', offer.author.avatar);
+    pin.id = offer.offerId;
+    return pin;
+  };
+
+  var pinToMap = function (listOfOffers) {
+    var fragmentPins = document.createDocumentFragment();
+    for (var i = 0; i < listOfOffers.length; i++) {
+      fragmentPins.appendChild(makePin(listOfOffers[i]));
+    }
+    tokyoMap.appendChild(fragmentPins);
+
+    var pins = tokyoMap.querySelectorAll('.map__pin:not(.map__pin--main)');
+
+    pins.forEach(function (pin) {
+      pin.addEventListener('click', appendCard);
+      pin.addEventListener('keydown', function (evt) {
+        if (onEnterPress(evt)) {
+          appendCard(evt);
+        }
+      });
+    });
+  };
 
   var setAttributeDisabled = function () {
     for (var i = 0; i < fieldsets.length; i++) {
@@ -211,10 +246,10 @@ var generateOffers = function (data) {
       pinToMap(listOfOffers);
       for (var i = 0; i < pinElements.length; i++) {
         pinOffer['map__pin-' + i] = listOfOffers[i];
-        pinElements[i].addEventListener('click', openCard);
+        pinElements[i].addEventListener('click', appendCard);
         pinElements[i].addEventListener('keydown', function openPopup() {
           if (onEnterPress(evt)) {
-            openCard(evt);
+            appendCard(evt);
           }
         });
       }
@@ -222,41 +257,10 @@ var generateOffers = function (data) {
     }
   };
 
-
-  closeButton.addEventListener('click', function () {
-    // alert('Hello button');
-  });
-
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      evt.preventDefault();
-      closePopup();
-    }
-  };
-
   var onEnterPress = function (evt) {
     return evt.keyCode === ENTER_KEYCODE;
   };
 
-  var closePopup = function () {
-    popup.style.display = 'hidden';
-    currentPin.classList.remove(PIN_ACTIVE);
-    document.addEventListener('keydown', onPopupEscPress);
-  };
-
-  var openCard = function (evt) {
-    if (currentPin) {
-      currentPin.classList.remove(PIN_ACTIVE);
-    }
-    currentPin = evt.currentTarget;
-    var offer = pinOffer[currentPin.id];
-    currentPin.classList.add(PIN_ACTIVE);
-
-    tokyoMap.appendChild(createCard(offer));
-    document.addEventListener('keydown', onPopupEscPress);
-  };
-
-  closeButton.addEventListener('click', closePopup);
   setAttributeDisabled();
   mainPin.addEventListener('mouseup', activateMap);
 };
