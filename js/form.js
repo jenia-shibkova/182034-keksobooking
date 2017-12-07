@@ -137,4 +137,3 @@ var onButtonPress = function () {
 buttonSubmit.addEventListener('click', function () {
   onButtonPress();
 });
-
