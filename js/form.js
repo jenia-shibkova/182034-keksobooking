@@ -1,12 +1,11 @@
 'use strict';
 
 var form = document.querySelector('.notice__form');
-var time = form.querySelector('#timein');
+var timeIn = form.querySelector('#timein');
 var timeOut = form.querySelector('#timeout');
 var title = form.querySelector('#title');
 var type = form.querySelector('#type');
 var price = form.querySelector('#price');
-var DEFAULT_PRICE_VALUE = 1000;
 var roomNumber = form.querySelector('#room_number');
 var capacity = form.querySelector('#capacity');
 var buttonSubmit = form.querySelector('.form__submit');
@@ -18,120 +17,56 @@ var TYPE_PRICE = {
   palace: 10000
 };
 
-var MIN_PRICES = [
-  0,
-  1000,
-  5000,
-  10000
-];
-
 var ROOM_CAPACITY = {
-  1: 1,
-  2: 2,
-  3: 3,
-  100: 0
+  1: [1],
+  2: [1, 2],
+  3: [1, 2, 3],
+  100: [0]
 };
 
-var checkEmptyString = function (param, paramValue) {
-  if (paramValue === '') {
-    param.classList.remove('valid');
-    param.classList.add('invalid');
-  } else {
-    param.classList.remove('invalid');
-    param.classList.add('valid');
+var syncTimeIn = function () {
+  timeOut.value = timeIn.value;
+};
+
+var syncTimeOut = function () {
+  timeIn.value = timeOut.value;
+};
+
+var syncTypesAndPrices = function (evt) {
+  price.min = TYPE_PRICE[evt.currentTarget.value];
+};
+
+var syncRoomsAndCapacity = function (evt) {
+  var capacitiesForRooms = ROOM_CAPACITY[evt.currentTarget.value];
+  var curCapacity = Number(capacity.value);
+  if (capacitiesForRooms.length === 1) {
+    capacity.value = capacitiesForRooms[0];
+  }
+  if (capacitiesForRooms.indexOf(curCapacity) === -1) {
+    capacity.value = capacitiesForRooms[capacitiesForRooms.length - 1];
   }
 };
 
-var checkValidity = function (param) {
-  if (param.validity.valid) {
-    param.classList.remove('invalid');
-    param.classList.add('valid');
-  } else {
-    param.classList.remove('valid');
-    param.classList.add('invalid');
-  }
+var checkValidity = function (field) {
+  field.style.border = (!field.validity.valid) ? 'thick solid red' : '';
 };
 
-var emptyForm = function () {
-  var priceValue = form.querySelector('#price').value;
-  var titleValue = form.querySelector('#title').value;
-  checkEmptyString(price, priceValue);
-  checkEmptyString(title, titleValue);
-};
-
-var onButtonPress = function () {
-  emptyForm();
-};
-
-price.value = DEFAULT_PRICE_VALUE;
-
-price.addEventListener('input', function () {
-  if (price.value < MIN_PRICES[1]) {
-    type.options[1].selected = true;
-    type.classList.add('valid');
-  } else if (price.value < MIN_PRICES[2]) {
-    type.options[0].selected = true;
-    type.classList.add('valid');
-  } else if (price.value < MIN_PRICES[3]) {
-    type.options[2].selected = true;
-    type.classList.add('valid');
-  } else {
-    type.options[3].selected = true;
-  }
-});
-
-
-type.addEventListener('change', function () {
-  var selectedOptions = type.value;
-  var value = TYPE_PRICE[selectedOptions];
-  price.setAttribute('min', value);
-  price.value = value;
-});
-
-roomNumber.addEventListener('change', function () {
-  var selectedOptions = roomNumber.options[roomNumber.selectedIndex].value;
-  var value = ROOM_CAPACITY[selectedOptions];
-  capacity.value = value;
-});
-
-time.addEventListener('input', function synchronizeTime() {
-  timeOut.selectedIndex = time.selectedIndex;
-});
-
-timeOut.addEventListener('input', function synchronizeTime() {
-  time.selectedIndex = timeOut.selectedIndex;
-});
-
-capacity.options[2].selected = true;
-
-capacity.addEventListener('change', function () {
-  if (capacity.options[0].selected === true) {
-    roomNumber.options[2].selected = true;
-  }
-  if (capacity.options[1].selected === true) {
-    roomNumber.options[1].selected = true;
-  }
-  if (capacity.options[2].selected === true) {
-    roomNumber.options[0].selected = true;
-  }
-  if (capacity.options[3].selected === true) {
-    roomNumber.options[3].selected = true;
-  }
-});
-
-title.addEventListener('keyup', function () {
+var onSubmitClick = function () {
   checkValidity(title);
-});
-
-price.addEventListener('keyup', function () {
   checkValidity(price);
-});
+};
 
-price.addEventListener('keydown', function () {
-  var priceValue = form.querySelector('#price').value;
-  checkEmptyString(price, priceValue);
-});
+var returnDefault = function () {
+  buttonSubmit.removeEventListener('click', onSubmitClick);
+};
 
-buttonSubmit.addEventListener('click', function () {
-  onButtonPress();
-});
+price.value = 1000;
+capacity.options[1].selected = true;
+
+timeIn.addEventListener('change', syncTimeIn);
+timeOut.addEventListener('change', syncTimeOut);
+type.addEventListener('change', syncTypesAndPrices);
+roomNumber.addEventListener('change', syncRoomsAndCapacity);
+
+buttonSubmit.addEventListener('click', onSubmitClick);
+buttonSubmit.addEventListener('submit', returnDefault);
