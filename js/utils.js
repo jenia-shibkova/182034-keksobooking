@@ -1,6 +1,7 @@
 'use strict';
 
 window.utils = (function () {
+  var ENTER_KEYCODE = 13;
 
   return {
 
@@ -37,6 +38,10 @@ window.utils = (function () {
 
     getNumberLeadingZero: function (number) {
       return (number < 10) ? '0' + number : number;
+    },
+
+    onEnterPress: function (evt) {
+      return evt.keyCode === ENTER_KEYCODE;
     }
   };
 })();

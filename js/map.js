@@ -2,7 +2,6 @@
 
 (function () {
   var ESC_KEYCODE = 27;
-  var ENTER_KEYCODE = 13;
   var PIN_ACTIVE = 'map__pin--active';
 
   var DATA = {
@@ -182,7 +181,7 @@
       pins.forEach(function (pin) {
         pin.addEventListener('click', appendCard);
         pin.addEventListener('keydown', function (evt) {
-          if (onEnterPress(evt)) {
+          if (window.utils.onEnterPress(evt)) {
             appendCard(evt);
           }
         });
@@ -208,23 +207,19 @@
         form.classList.remove('notice__form--disabled');
         removeAttributeDisabled();
 
-        var listOfOffers = makeListOfOffers(8);
+        var listOfOffers = makeListOfOffers(DATA.countOfOffers);
         pinToMap(listOfOffers);
         for (var i = 0; i < pinElements.length; i++) {
           pinOffer['map__pin-' + i] = listOfOffers[i];
           pinElements[i].addEventListener('click', appendCard);
           pinElements[i].addEventListener('keydown', function openPopup() {
-            if (onEnterPress(evt)) {
+            if (window.utils.onEnterPress(evt)) {
               appendCard(evt);
             }
           });
         }
         mainPin.removeEventListener('mouseup', activateMap);
       }
-    };
-
-    var onEnterPress = function (evt) {
-      return evt.keyCode === ENTER_KEYCODE;
     };
 
     setAttributeDisabled();
