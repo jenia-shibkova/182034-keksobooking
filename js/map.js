@@ -1,84 +1,47 @@
 'use strict';
 
-var ESC_KEYCODE = 27;
-var ENTER_KEYCODE = 13;
-var PIN_ACTIVE = 'map__pin--active';
+(function () {
+  var ESC_KEYCODE = 27;
+  var PIN_ACTIVE = 'map__pin--active';
 
-var DATA = {
-  countOfOffers: 8,
-  title: [
-    'Большая уютная квартира',
-    'Маленькая неуютная квартира',
-    'Огромный прекрасный дворец',
-    'Маленький ужасный дворец',
-    'Красивый гостевой домик',
-    'Некрасивый негостеприимный домик',
-    'Уютное бунгало далеко от моря',
-    'Неуютное бунгало по колено в воде'
-  ],
-  type: ['flat', 'house', 'bungalo'],
-  rooms: [1, 2, 3, 4, 5],
-  checkIn: ['12:00', '13:00', '14:00'],
-  checkOut: ['12:00', '13:00', '14:00'],
-  features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner']
-};
-
-
-var generateOffers = function (data) {
-
-  var getRandomElement = function (array) {
-    return array[Math.floor(Math.random() * array.length)];
+  var DATA = {
+    countOfOffers: 8,
+    title: [
+      'Большая уютная квартира',
+      'Маленькая неуютная квартира',
+      'Огромный прекрасный дворец',
+      'Маленький ужасный дворец',
+      'Красивый гостевой домик',
+      'Некрасивый негостеприимный домик',
+      'Уютное бунгало далеко от моря',
+      'Неуютное бунгало по колено в воде'
+    ],
+    type: ['flat', 'house', 'bungalo'],
+    rooms: [1, 2, 3, 4, 5],
+    checkIn: ['12:00', '13:00', '14:00'],
+    checkOut: ['12:00', '13:00', '14:00'],
+    features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner']
   };
 
-  var getRandomInteger = function (from, to) {
-    return Math.floor(Math.random() * (to - from) + from);
-  };
 
-  var makeRandomArray = function (array) {
-    var arrayCopy = array.slice();
-    var newLength = Math.ceil(Math.random() * arrayCopy.length);
-    var newArray = [];
-    for (var i = 0; i < newLength; i++) {
-      var randomElement = getRandomInteger(0, arrayCopy.length);
-      newArray.push(arrayCopy[randomElement]);
-      arrayCopy.splice(randomElement, 1);
-    }
-    return newArray;
-  };
-
-  var shuffleArrayOfTitles = function (array) {
-    var copy = array.slice(0);
-    for (var i = copy.length - 1; i > 0; i--) {
-      var j = Math.floor(Math.random() * (i + 1));
-      var element = copy[i];
-      copy[i] = copy[j];
-      copy[j] = element;
-    }
-    return copy;
-  };
-
-  var getNumberLeadingZero = function (number) {
-    return (number < 10) ? '0' + number : number;
-  };
-
-  var getOfferObject = function (index) {
-    var newArrayOfTitles = shuffleArrayOfTitles(data.title);
-    var locationX = getRandomInteger(300, 900);
-    var locationY = getRandomInteger(100, 500);
+  var getOfferObject = function (index, data) {
+    var newArrayOfTitles = window.utils.shuffleArrayOfElements(data.title);
+    var locationX = window.utils.getRandomInteger(300, 900);
+    var locationY = window.utils.getRandomInteger(100, 500);
     return {
       author: {
-        avatar: 'img/avatars/user' + getNumberLeadingZero(index + 1) + '.png'
+        avatar: 'img/avatars/user' + window.utils.getNumberLeadingZero(index + 1) + '.png'
       },
       offer: {
         title: newArrayOfTitles[index],
         address: locationX + ', ' + locationY,
-        price: getRandomInteger(1000, 1000000),
-        type: getRandomElement(data.type),
-        rooms: getRandomInteger(1, 5),
-        guests: getRandomInteger(1, 10),
-        checkIn: getRandomElement(data.checkIn),
-        checkOut: getRandomElement(data.checkOut),
-        features: makeRandomArray(data.features),
+        price: window.utils.getRandomInteger(1000, 1000000),
+        type: window.utils.getRandomElement(data.type),
+        rooms: window.utils.getRandomInteger(1, 5),
+        guests: window.utils.getRandomInteger(1, 10),
+        checkIn: window.utils.getRandomElement(data.checkIn),
+        checkOut: window.utils.getRandomElement(data.checkOut),
+        features: window.utils.makeRandomArray(data.features),
         description: '',
         photos: []
       },
@@ -90,10 +53,10 @@ var generateOffers = function (data) {
     };
   };
 
-  var makeListOfOffers = function () {
+  var makeListOfOffers = function (offersCount) {
     var listOfOffers = [];
-    for (var i = 0; i < data.countOfOffers; i++) {
-      listOfOffers.push(getOfferObject(i));
+    for (var i = 0; i < offersCount; i++) {
+      listOfOffers.push(getOfferObject(i, DATA));
     }
     return listOfOffers;
   };
@@ -112,7 +75,6 @@ var generateOffers = function (data) {
     switch (type) {
       case 'flat':
         return 'квартира';
-
       case 'house':
         return 'дом';
 
@@ -216,7 +178,7 @@ var generateOffers = function (data) {
     pins.forEach(function (pin) {
       pin.addEventListener('click', appendCard);
       pin.addEventListener('keydown', function (evt) {
-        if (onEnterPress(evt)) {
+        if (window.utils.onEnterPress(evt)) {
           appendCard(evt);
         }
       });
@@ -236,19 +198,18 @@ var generateOffers = function (data) {
   };
 
   var activateMap = function (evt) {
-
     if (mainPin === evt.currentTarget) {
       tokyoMap.classList.remove('map--faded');
       form.classList.remove('notice__form--disabled');
       removeAttributeDisabled();
 
-      var listOfOffers = makeListOfOffers(8);
+      var listOfOffers = makeListOfOffers(DATA.countOfOffers);
       pinToMap(listOfOffers);
       for (var i = 0; i < pinElements.length; i++) {
         pinOffer['map__pin-' + i] = listOfOffers[i];
         pinElements[i].addEventListener('click', appendCard);
         pinElements[i].addEventListener('keydown', function openPopup() {
-          if (onEnterPress(evt)) {
+          if (window.utils.onEnterPress(evt)) {
             appendCard(evt);
           }
         });
@@ -257,12 +218,6 @@ var generateOffers = function (data) {
     }
   };
 
-  var onEnterPress = function (evt) {
-    return evt.keyCode === ENTER_KEYCODE;
-  };
-
   setAttributeDisabled();
   mainPin.addEventListener('mouseup', activateMap);
-};
-
-generateOffers(DATA);
+})();
