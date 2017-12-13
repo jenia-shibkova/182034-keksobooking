@@ -220,4 +220,67 @@
 
   setAttributeDisabled();
   mainPin.addEventListener('mouseup', activateMap);
+
+  // реакция на перемещение pin
+
+  var pinHandle = document.querySelector('.map__pin--main');
+  var formAddress = document.querySelector('#address');
+  var pinWidth = 65;
+  var pinHeight = 87; // 65 + 22
+  var minX = 0;
+  var maxX = 1200;
+  var minY = 100;
+  var maxY = 500;
+
+
+  pinHandle.addEventListener('mousedown', function (evt) {
+    evt.preventDefault();
+
+    var startCoords = {
+      x: evt.clientX,
+      y: evt.clientY
+    };
+
+    var onMouseMove = function (moveEvt) {
+      moveEvt.preventDefault();
+
+      var shift = {
+        x: startCoords.x - moveEvt.clientX,
+        y: startCoords.y - moveEvt.clientY
+      };
+
+      startCoords = {
+        x: moveEvt.clientX,
+        y: moveEvt.clientY
+      };
+
+      var pinTop = pinHandle.offsetTop + pinHeight;
+      var pinLeft = pinHandle.offsetLeft + pinWidth / 2;
+
+      if (pinTop >= minY && pinTop <= maxY && pinLeft >= minX && pinLeft <= maxX) {
+        pinHandle.style.top = (pinHandle.offsetTop - shift.y) + 'px';
+        pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
+      } else if (pinTop < minY) {
+        pinHandle.style.top = minY - pinHeight + 'px';
+      } else if (pinTop > maxY) {
+        pinHandle.style.top = maxY - pinHeight + 'px';
+      } else if (pinLeft < minX) {
+        pinHandle.style.left = minX - pinWidth / 2 + 'px';
+      } else if (pinLeft > maxX) {
+        pinHandle.style.left = maxX - pinWidth / 2 + 'px';
+      }
+
+      formAddress.value = 'x: ' + pinLeft + ' y: ' + pinTop;
+    };
+
+    var onMouseUp = function (upEvt) {
+      upEvt.preventDefault();
+
+      tokyoMap.removeEventListener('mousemove', onMouseMove);
+      tokyoMap.removeEventListener('mouseup', onMouseUp);
+    };
+
+    tokyoMap.addEventListener('mousemove', onMouseMove);
+    tokyoMap.addEventListener('mouseup', onMouseUp);
+  });
 })();
