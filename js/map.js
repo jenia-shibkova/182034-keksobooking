@@ -272,8 +272,8 @@
 
       pinHandle.style.top = setBoundsOnY(pinHandle.offsetTop - shift.y) + 'px';
 
-      var pinTop = (pinHandle.offsetLeft - shift.x) + mainPinHeight;
-      var pinLeft = (pinHandle.offsetTop - shift.y) + mainPinWidth / 2;
+      var pinTop = (pinHandle.offsetTop - shift.y) + mainPinWidth / 2;
+      var pinLeft = (pinHandle.offsetLeft - shift.x) + mainPinHeight;
 
       if (pinHandle.offsetLeft - shift.x > BOUNDS.x.minX + mainPinWidth / 2 && pinHandle.offsetLeft - shift.x <
         BOUNDS.x.maxX - mainPinWidth / 2) {
