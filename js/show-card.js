@@ -4,12 +4,11 @@ window.showCard = (function () {
   var ESC_KEYCODE = 27;
   var PIN_ACTIVE = 'map__pin--active';
   var currentPin = null;
-  var pinOffer = {};
 
   var onPopupEscPress = function (evt) {
     if (evt.keyCode === ESC_KEYCODE) {
       evt.preventDefault();
-      window.closePopup();
+      window.showCard.closePopup();
     }
   };
 
@@ -34,7 +33,7 @@ window.showCard = (function () {
         currentPin = evt.currentTarget;
       }
 
-      var offerElement = window.cards.createCard(pinOffer[currentPin.id]);
+      var offerElement = window.cards.createCard(window.pinOffer[currentPin.id]);
       window.tokyoMap.appendChild(offerElement);
       currentPin.classList.add(PIN_ACTIVE);
       document.addEventListener('keydown', onPopupEscPress);

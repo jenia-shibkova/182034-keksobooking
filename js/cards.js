@@ -50,7 +50,7 @@ window.cards = (function () {
       offerElement.querySelector('.map__card p:nth-of-type(5)').textContent = offer.description;
       offerElement.querySelector('img').setAttribute('src', author.avatar);
 
-      popupBtnClose.addEventListener('click', window.closePopup);
+      popupBtnClose.addEventListener('click', window.showCard.closePopup);
 
       return offerElement;
     }
