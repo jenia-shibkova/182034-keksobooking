@@ -11,6 +11,13 @@
   var capacity = form.querySelector('#capacity');
   var buttonSubmit = form.querySelector('.form__submit');
 
+  var TYPE_PRICE = {
+    flat: 1000,
+    bungalo: 0,
+    house: 5000,
+    palace: 10000
+  };
+
   var ROOM_CAPACITY = {
     1: [1],
     2: [1, 2],
@@ -18,13 +25,12 @@
     100: [0]
   };
 
-
-  var syncValues = function (element, value) {
-    element.value = value;
+  var syncValues = function (elem1, elem2) {
+    elem2.value = elem1.value;
   };
 
-  var syncValueWithMin = function (element, value) {
-    element.min = value;
+  var syncValueWithMin = function (select, input) {
+    input.min = TYPE_PRICE[select.value];
   };
 
   var syncRoomsAndCapacity = function (evt) {
@@ -55,19 +61,16 @@
   capacity.options[1].selected = true;
 
   // Синхронизация полей
-  var onChangeTimeIn = function () {
-    window.synchronizeFields(timeIn, timeOut, window.DATA.checkIn, window.DATA.checkOut, syncValues);
-  };
-  var onChangeTimeOut = function () {
-    window.synchronizeFields(timeOut, timeIn, window.DATA.checkOut, window.DATA.checkIn, syncValues);
-  };
-  var onChangeType = function () {
-    window.synchronizeFields(type, price, ['flat', 'bungalo', 'house', 'palace'], ['1000', '0', '5000', '10000'], syncValueWithMin);
-  };
 
-  timeIn.addEventListener('change', onChangeTimeIn);
-  timeOut.addEventListener('change', onChangeTimeOut);
-  type.addEventListener('change', onChangeType);
+  timeIn.addEventListener('change', function () {
+    window.synchronizeFields(timeIn, timeOut, syncValues);
+  });
+  timeOut.addEventListener('change', function () {
+    window.synchronizeFields(timeOut, timeIn, syncValues);
+  });
+  type.addEventListener('change', function () {
+    window.synchronizeFields(type, price, syncValueWithMin);
+  });
   roomNumber.addEventListener('change', syncRoomsAndCapacity);
 
   buttonSubmit.addEventListener('click', onSubmitClick);

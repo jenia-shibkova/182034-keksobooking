@@ -1,7 +1,7 @@
 'use strict';
 
-window.synchronizeFields = function (sourceElement, targetElement, sourceData, targetData, syncValuesFunc) {
-  var index = sourceData.indexOf(sourceElement.value);
-  var targetElementValue = targetData[index];
-  syncValuesFunc(targetElement, targetElementValue);
+window.synchronizeFields = function (elem1, elem2, callback) {
+  if (typeof callback === 'function') {
+    callback(elem1, elem2);
+  }
 };
