@@ -4,7 +4,7 @@
   var ESC_KEYCODE = 27;
   var PIN_ACTIVE = 'map__pin--active';
 
-  var DATA = {
+  window.DATA = {
     countOfOffers: 8,
     title: [
       'Большая уютная квартира',
@@ -56,7 +56,7 @@
   var makeListOfOffers = function (offersCount) {
     var listOfOffers = [];
     for (var i = 0; i < offersCount; i++) {
-      listOfOffers.push(getOfferObject(i, DATA));
+      listOfOffers.push(getOfferObject(i, window.DATA));
     }
     return listOfOffers;
   };
@@ -203,7 +203,7 @@
       form.classList.remove('notice__form--disabled');
       removeAttributeDisabled();
 
-      var listOfOffers = makeListOfOffers(DATA.countOfOffers);
+      var listOfOffers = makeListOfOffers(window.DATA.countOfOffers);
       pinToMap(listOfOffers);
       for (var i = 0; i < pinElements.length; i++) {
         pinOffer['map__pin-' + i] = listOfOffers[i];
