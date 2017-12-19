@@ -104,19 +104,10 @@
   var currentPin = null;
   var pinOffer = {};
 
-  var makePin = function (offer) {
-    var pin = document.querySelector('#lodge-template').content.querySelector('.map__pin').cloneNode(true);
-    pin.style.left = offer.location.x;
-    pin.style.top = offer.location.y;
-    pin.querySelector('img').setAttribute('src', offer.author.avatar);
-    pin.id = offer.offerId;
-    return pin;
-  };
-
   var pinToMap = function (listOfOffers) {
     var fragmentPins = document.createDocumentFragment();
     for (var i = 0; i < listOfOffers.length; i++) {
-      fragmentPins.appendChild(makePin(listOfOffers[i]));
+      fragmentPins.appendChild(window.pin.makePin(listOfOffers[i]));
     }
     tokyoMap.appendChild(fragmentPins);
 
