@@ -60,47 +60,11 @@
   };
 
   window.tokyoMap = document.querySelector('.map');
-/*
-  var onPopupEscPress = function (evt) {
-    if (evt.keyCode === ESC_KEYCODE) {
-      evt.preventDefault();
-      window.closePopup();
-    }
-  };
-
-  window.closePopup = function () {
-    var oldPopup = tokyoMap.querySelector('.popup');
-    if (oldPopup !== null) {
-      tokyoMap.removeChild(oldPopup);
-    }
-    if (currentPin) {
-      currentPin.classList.remove(PIN_ACTIVE);
-      currentPin = null;
-    }
-    document.removeEventListener('keydown', onPopupEscPress);
-  };
-/*
-  var appendCard = function (evt) {
-    window.closePopup();
-    if (evt.currentTarget === mainPin || currentPin === evt.currentTarget) {
-      return;
-    } else {
-      currentPin = evt.currentTarget;
-    }
-
-    var offerElement = window.cards.createCard(pinOffer[currentPin.id]);
-    tokyoMap.appendChild(offerElement);
-    currentPin.classList.add(PIN_ACTIVE);
-    document.addEventListener('keydown', onPopupEscPress);
-  };
-*/
   window.mainPin = document.querySelector('.map__pin--main');
   var form = document.querySelector('.notice__form');
   var fieldsets = form.querySelectorAll('fieldset');
 
   var pinElements = document.getElementsByClassName('map__pin');
-  /*var currentPin = null;
-  */
   window.pinOffer = {};
 
   var pinToMap = function (listOfOffers) {
