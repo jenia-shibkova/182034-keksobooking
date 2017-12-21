@@ -55,9 +55,6 @@
     activateMap(evt);
     window.mainPin.removeEventListener('mouseup', onMainPinMouseUp);
   };
-
-  window.mainPin.addEventListener('mouseup', onMainPinMouseUp);
-
   setAttributeDisabled();
 
   window.mainPin.addEventListener('mouseup', onMainPinMouseUp);
