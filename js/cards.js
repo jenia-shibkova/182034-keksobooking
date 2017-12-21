@@ -26,20 +26,18 @@ window.cards = (function () {
   };
 
   return {
-    createCard: function (listOfOffers) {
+    createCard: function (offerNum) {
       var offerElement = similarOfferTemplate.cloneNode(true);
-      var offer = listOfOffers.offer;
-      var author = listOfOffers.author;
-      var allFeatures = listOfOffers.offer.features;
+      var allFeatures = offerNum.offer.features;
       var popup = offerElement.querySelector('.popup');
       var popupBtnClose = popup.querySelector('.popup__close');
-
-      offerElement.querySelector('.map__card h3').textContent = offer.title;
-      offerElement.querySelector('.map__card p:nth-of-type(1) small').textContent = offer.address;
-      offerElement.querySelector('.popup__price').textContent = offer.price + '₽' + '/ночь';
-      offerElement.querySelector('.map__card h4').textContent = convertTypeToRussian(offer.type);
-      offerElement.querySelector('.map__card p:nth-of-type(3)').textContent = 'Для ' + offer.guests + ' гостей в ' + offer.rooms + ' комнатах';
-      offerElement.querySelector('.map__card p:nth-of-type(4)').textContent = 'Заезд после ' + offer.checkIn + ', выезд после ' + offer.checkOut;
+      offerElement.querySelector('.map__card h3').textContent = offerNum.offer.title;
+      offerElement.querySelector('.map__card p:nth-of-type(1) small').textContent = offerNum.offer.address;
+      offerElement.querySelector('.popup__price').textContent = offerNum.offer.price + '₽' + '/ночь';
+      offerElement.querySelector('.map__card h4').textContent = convertTypeToRussian(offerNum.offer.type);
+      offerElement.querySelector('.map__card p:nth-of-type(3)').textContent = 'Для ' + offerNum.offer.guests + ' гостей в ' + offerNum.offer.rooms + ' комнатах';
+      offerElement.querySelector('.map__card p:nth-of-type(4)').textContent = 'Заезд после ' + offerNum.offer.checkin + ', выезд' +
+        ' после ' + offerNum.offer.checkout;
 
       var offerFeature = offerElement.querySelector('.popup__features');
       while (offerFeature.firstChild) {
@@ -47,8 +45,8 @@ window.cards = (function () {
       }
       offerFeature.appendChild(createFeatures(allFeatures));
 
-      offerElement.querySelector('.map__card p:nth-of-type(5)').textContent = offer.description;
-      offerElement.querySelector('img').setAttribute('src', author.avatar);
+      offerElement.querySelector('.map__card p:nth-of-type(5)').textContent = offerNum.offer.description;
+      offerElement.querySelector('img').setAttribute('src', offerNum.author.avatar);
 
       popupBtnClose.addEventListener('click', window.showCard.closePopup);
 
