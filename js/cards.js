@@ -36,7 +36,7 @@ window.cards = (function () {
 
       offerElement.querySelector('.map__card h3').textContent = offer.title;
       offerElement.querySelector('.map__card p:nth-of-type(1) small').textContent = offer.address;
-      offerElement.querySelector('.popup__price').textContent = offer.price + '₽' + '/ночь';//
+      offerElement.querySelector('.popup__price').textContent = offer.price + '₽' + '/ночь';
       offerElement.querySelector('.map__card h4').textContent = convertTypeToRussian(offer.type);
       offerElement.querySelector('.map__card p:nth-of-type(3)').textContent = 'Для ' + offer.guests + ' гостей в ' + offer.rooms + ' комнатах';
       offerElement.querySelector('.map__card p:nth-of-type(4)').textContent = 'Заезд после ' + offer.checkIn + ', выезд после ' + offer.checkOut;
@@ -56,4 +56,3 @@ window.cards = (function () {
     }
   };
 })();
-

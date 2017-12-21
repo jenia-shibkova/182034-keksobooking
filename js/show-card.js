@@ -27,13 +27,14 @@ window.showCard = (function () {
 
     appendCard: function (evt) {
       window.showCard.closePopup();
+      var pinTarget = evt.currentTarget.dataset.number;
       if (evt.currentTarget === window.mainPin || currentPin === evt.currentTarget) {
         return;
       } else {
-        currentPin = evt.currentTarget;
+        currentPin = pinTarget;
       }
 
-      var offerElement = window.cards.createCard(window.pinOffer[currentPin.id]);
+      var offerElement = window.cards.createCard(window.pinOffer[pinTarget]);
       window.tokyoMap.appendChild(offerElement);
       currentPin.classList.add(PIN_ACTIVE);
       document.addEventListener('keydown', onPopupEscPress);

@@ -53,12 +53,8 @@
     checkValidity(price);
   };
 
-  var returnDefault = function () {
-    buttonSubmit.removeEventListener('click', onSubmitClick);
-  };
-
   price.value = 1000;
-  capacity.options[1].selected = true;
+  capacity.options[2].selected = true;
 
   // Синхронизация полей
 
@@ -74,5 +70,9 @@
   roomNumber.addEventListener('change', syncRoomsAndCapacity);
 
   buttonSubmit.addEventListener('click', onSubmitClick);
-  buttonSubmit.addEventListener('submit', returnDefault);
+  buttonSubmit.addEventListener('submit', function (evt) {
+    window.backend.save(new FormData(form), window.backend.errorHandler);
+    evt.preventDefault();
+  });
+
 })();
