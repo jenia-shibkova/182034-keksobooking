@@ -7,7 +7,7 @@ window.backend = (function () {
     errorNet: 'Произошла ошибка соединения',
     errorTime: 'Запрос не успел выполниться за '
   };
-  var SERVER_URL = 'https://1510.dump.academy/keksobookingf';
+  var SERVER_URL = 'https://1510.dump.academy/keksobooking';
 
   var createRequest = function (onLoad, onError) {
     var xhr = new XMLHttpRequest();
