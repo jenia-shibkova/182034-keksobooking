@@ -2,89 +2,19 @@
 
 (function () {
 
-  window.DATA = {
-    countOfOffers: 8,
-    title: [
-      'Большая уютная квартира',
-      'Маленькая неуютная квартира',
-      'Огромный прекрасный дворец',
-      'Маленький ужасный дворец',
-      'Красивый гостевой домик',
-      'Некрасивый негостеприимный домик',
-      'Уютное бунгало далеко от моря',
-      'Неуютное бунгало по колено в воде'
-    ],
-    type: ['flat', 'house', 'bungalo'],
-    rooms: [1, 2, 3, 4, 5],
-    checkIn: ['12:00', '13:00', '14:00'],
-    checkOut: ['12:00', '13:00', '14:00'],
-    features: ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditioner']
-  };
-
-
-  var getOfferObject = function (index, data) {
-    var newArrayOfTitles = window.utils.shuffleArrayOfElements(data.title);
-    var locationX = window.utils.getRandomInteger(300, 900);
-    var locationY = window.utils.getRandomInteger(100, 500);
-    return {
-      author: {
-        avatar: 'img/avatars/user' + window.utils.getNumberLeadingZero(index + 1) + '.png'
-      },
-      offer: {
-        title: newArrayOfTitles[index],
-        address: locationX + ', ' + locationY,
-        price: window.utils.getRandomInteger(1000, 1000000),
-        type: window.utils.getRandomElement(data.type),
-        rooms: window.utils.getRandomInteger(1, 5),
-        guests: window.utils.getRandomInteger(1, 10),
-        checkIn: window.utils.getRandomElement(data.checkIn),
-        checkOut: window.utils.getRandomElement(data.checkOut),
-        features: window.utils.makeRandomArray(data.features),
-        description: '',
-        photos: []
-      },
-      location: {
-        x: locationX + 'px',
-        y: locationY + 'px'
-      },
-      offerId: 'map__pin-' + index
-    };
-  };
-
-  var makeListOfOffers = function (offersCount) {
-    var listOfOffers = [];
-    for (var i = 0; i < offersCount; i++) {
-      listOfOffers.push(getOfferObject(i, window.DATA));
+  var makeOffers = function (offers) {
+    var fragment = document.createDocumentFragment();
+    for (var i = 0; i < offers.length; i++) {
+      fragment.appendChild(window.pin.makePin(offers[i], i, offers));
     }
-    return listOfOffers;
+    mapPins.appendChild(fragment);
   };
 
   window.tokyoMap = document.querySelector('.map');
+  var mapPins = document.querySelector('.map__pins');
   window.mainPin = document.querySelector('.map__pin--main');
   var form = document.querySelector('.notice__form');
   var fieldsets = form.querySelectorAll('fieldset');
-
-  var pinElements = document.getElementsByClassName('map__pin');
-  window.pinOffer = {};
-
-  var pinToMap = function (listOfOffers) {
-    var fragmentPins = document.createDocumentFragment();
-    for (var i = 0; i < listOfOffers.length; i++) {
-      fragmentPins.appendChild(window.pin.makePin(listOfOffers[i]));
-    }
-    window.tokyoMap.appendChild(fragmentPins);
-
-    var pins = window.tokyoMap.querySelectorAll('.map__pin:not(.map__pin--main)');
-
-    pins.forEach(function (pin) {
-      pin.addEventListener('click', window.showCard.appendCard);
-      pin.addEventListener('keydown', function (evt) {
-        if (window.utils.onEnterPress(evt)) {
-          window.showCard.appendCard(evt);
-        }
-      });
-    });
-  };
 
   var setAttributeDisabled = function () {
     for (var i = 0; i < fieldsets.length; i++) {
@@ -103,24 +33,19 @@
       window.tokyoMap.classList.remove('map--faded');
       form.classList.remove('notice__form--disabled');
       removeAttributeDisabled();
+      window.backend.load(makeOffers, window.backend.errorHandler);
 
-      window.listOfOffers = makeListOfOffers(window.DATA.countOfOffers);
-      pinToMap(window.listOfOffers);
-      for (var i = 0; i < pinElements.length; i++) {
-        window.pinOffer['map__pin-' + i] = window.listOfOffers[i];
-        pinElements[i].addEventListener('click', window.showCard.appendCard);
-        pinElements[i].addEventListener('keydown', function openPopup() {
-          if (window.utils.onEnterPress(evt)) {
-            window.showCard.appendCard(evt);
-          }
-        });
-      }
-      window.mainPin.removeEventListener('mouseup', activateMap);
+      window.mainPin.removeEventListener('mousedown', activateMap);
     }
   };
 
+  var onMainPinMouseUp = function (evt) {
+    activateMap(evt);
+    window.mainPin.removeEventListener('mouseup', onMainPinMouseUp);
+  };
   setAttributeDisabled();
-  window.mainPin.addEventListener('mouseup', activateMap);
+
+  window.mainPin.addEventListener('mouseup', onMainPinMouseUp);
 
   // реакция на перемещение pin
 

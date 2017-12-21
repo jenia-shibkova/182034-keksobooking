@@ -25,15 +25,15 @@ window.showCard = (function () {
       document.removeEventListener('keydown', onPopupEscPress);
     },
 
-    appendCard: function (evt) {
+    appendCard: function (evt, offers) {
       window.showCard.closePopup();
       if (evt.currentTarget === window.mainPin || currentPin === evt.currentTarget) {
         return;
       } else {
         currentPin = evt.currentTarget;
       }
-
-      var offerElement = window.cards.createCard(window.pinOffer[currentPin.id]);
+      var pinTarget = evt.currentTarget.dataset.pinNumber;
+      var offerElement = window.cards.createCard(offers[pinTarget]);
       window.tokyoMap.appendChild(offerElement);
       currentPin.classList.add(PIN_ACTIVE);
       document.addEventListener('keydown', onPopupEscPress);
