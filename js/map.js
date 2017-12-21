@@ -5,21 +5,9 @@
   var makeOffers = function (offers) {
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
-      fragment.appendChild(window.pin.makePin(offers[i], i));
+      fragment.appendChild(window.pin.makePin(offers[i], i, offers));
     }
     mapPins.appendChild(fragment);
-
-    var pins = window.tokyoMap.querySelectorAll('.map__pin:not(.map__pin--main)');
-    pins.forEach(function (pin) {
-      pin.addEventListener('click', function (evt) {
-        window.showCard.appendCard(evt, offers);
-      });
-      pin.addEventListener('keydown', function (evt) {
-        if (window.utils.onEnterPress(evt)) {
-          window.showCard.appendCard(evt);
-        }
-      });
-    });
   };
 
   window.tokyoMap = document.querySelector('.map');
