@@ -9,7 +9,7 @@ window.pin = (function () {
     return (y - PIN_Y) + 'px';
   };
   return {
-    makePin: function (offer, i, offers) {
+    makePin: function (offer, i) {
       var pin = document.querySelector('#lodge-template').content.querySelector('.map__pin').cloneNode(true);
       pin.classList.add('map__pin');
       pin.style.left = pinX(offer.location.x);
@@ -17,7 +17,7 @@ window.pin = (function () {
       pin.querySelector('img').setAttribute('src', offer.author.avatar);
       pin.dataset.pinNumber = i;
       pin.addEventListener('click', function (evt) {
-        window.showCard.appendCard(evt, offers);
+        window.showCard.appendCard(evt);
       });
       pin.addEventListener('keydown', function (evt) {
         if (window.utils.onEnterPress(evt)) {

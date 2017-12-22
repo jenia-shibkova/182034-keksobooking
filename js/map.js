@@ -1,13 +1,15 @@
 'use strict';
 
 (function () {
-
+  var MAX_PINS = 5;
   var makeOffers = function (offers) {
+    deletePins();
+    window.listOFOffers = offers;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
       fragment.appendChild(window.pin.makePin(offers[i], i, offers));
     }
-    mapPins.appendChild(fragment);
+    return mapPins.appendChild(fragment);
   };
 
   window.tokyoMap = document.querySelector('.map');
@@ -28,12 +30,25 @@
     }
   };
 
+  var deletePins = function () {
+    var oldPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    for (var i = 0; i < oldPins.length; i++) {
+      mapPins.removeChild(oldPins[i]);
+    }
+  };
+
   var activateMap = function (evt) {
     if (window.mainPin === evt.currentTarget) {
       window.tokyoMap.classList.remove('map--faded');
       form.classList.remove('notice__form--disabled');
       removeAttributeDisabled();
-      window.backend.load(makeOffers, window.backend.errorHandler);
+
+      var loadData = function load(data) {
+        makeOffers(data.slice(0, MAX_PINS));
+        window.filter(data, MAX_PINS, makeOffers);
+      };
+      // Загрузка данных с сервера
+      window.backend.load(loadData, window.backend.errorHandler);
 
       window.mainPin.removeEventListener('mousedown', activateMap);
     }
@@ -46,77 +61,4 @@
   setAttributeDisabled();
 
   window.mainPin.addEventListener('mouseup', onMainPinMouseUp);
-
-  // реакция на перемещение pin
-
-  var pinHandle = document.querySelector('.map__pin--main');
-  var formAddress = document.querySelector('#address');
-  var mainPinHeight = pinHandle.offsetHeight + 22;
-  var mainPinWidth = pinHandle.offsetWidth;
-
-  var BOUNDS = {
-    x: {
-      minX: 0,
-      maxX: 1200
-    },
-    y: {
-      minY: 100,
-      maxY: 500
-    }
-  };
-
-  pinHandle.addEventListener('mousedown', function (evt) {
-    evt.preventDefault();
-
-    var startCoords = {
-      x: evt.clientX,
-      y: evt.clientY
-    };
-
-    var setBoundsOnY = function (posY) {
-      if (posY < BOUNDS.y.minY) {
-        return BOUNDS.y.minY;
-      } else if (posY > BOUNDS.y.maxY) {
-        return BOUNDS.y.maxY;
-      } else {
-        return posY;
-      }
-    };
-
-    var onMouseMove = function (moveEvt) {
-      moveEvt.preventDefault();
-
-      var shift = {
-        x: startCoords.x - moveEvt.clientX,
-        y: startCoords.y - moveEvt.clientY
-      };
-
-      startCoords = {
-        x: moveEvt.clientX,
-        y: moveEvt.clientY
-      };
-
-      pinHandle.style.top = setBoundsOnY(pinHandle.offsetTop - shift.y) + 'px';
-
-      var pinTop = (pinHandle.offsetTop - shift.y) + mainPinHeight;
-      var pinLeft = (pinHandle.offsetLeft - shift.x) + mainPinWidth / 2;
-
-      if (pinHandle.offsetLeft - shift.x > BOUNDS.x.minX + mainPinWidth / 2 && pinHandle.offsetLeft - shift.x <
-        BOUNDS.x.maxX - mainPinWidth / 2) {
-        pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
-      }
-
-      formAddress.value = 'x: ' + pinLeft + ' y: ' + pinTop;
-    };
-
-    var onMouseUp = function (upEvt) {
-      upEvt.preventDefault();
-
-      window.tokyoMap.removeEventListener('mousemove', onMouseMove);
-      window.tokyoMap.removeEventListener('mouseup', onMouseUp);
-    };
-
-    window.tokyoMap.addEventListener('mousemove', onMouseMove);
-    window.tokyoMap.addEventListener('mouseup', onMouseUp);
-  });
 })();
