@@ -25,7 +25,7 @@ window.showCard = (function () {
       document.removeEventListener('keydown', onPopupEscPress);
     },
 
-    appendCard: function (evt, offers) {
+    appendCard: function (evt) {
       window.showCard.closePopup();
       if (evt.currentTarget === window.mainPin || currentPin === evt.currentTarget) {
         return;
@@ -33,7 +33,7 @@ window.showCard = (function () {
         currentPin = evt.currentTarget;
       }
       var pinTarget = evt.currentTarget.dataset.pinNumber;
-      var offerElement = window.cards.createCard(offers[pinTarget]);
+      var offerElement = window.cards.createCard(window.listOFOffers[pinTarget]);
       window.tokyoMap.appendChild(offerElement);
       currentPin.classList.add(PIN_ACTIVE);
       document.addEventListener('keydown', onPopupEscPress);
