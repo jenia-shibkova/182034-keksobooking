@@ -7,9 +7,9 @@
     window.listOFOffers = offers;
     var fragment = document.createDocumentFragment();
     for (var i = 0; i < offers.length; i++) {
-      fragment.appendChild(window.pin.makePin(offers[i], i, offers));
+      fragment.appendChild(window.pin.makePin(offers[i], i));
     }
-    return mapPins.appendChild(fragment);
+    mapPins.appendChild(fragment);
   };
 
   window.tokyoMap = document.querySelector('.map');
@@ -31,10 +31,11 @@
   };
 
   var deletePins = function () {
-    var oldPins = document.querySelectorAll('.map__pin:not(.map__pin--main)');
+    var oldPins = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
     for (var i = 0; i < oldPins.length; i++) {
       mapPins.removeChild(oldPins[i]);
     }
+
   };
 
   var activateMap = function (evt) {
