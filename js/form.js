@@ -9,7 +9,6 @@
   var price = form.querySelector('#price');
   var roomNumber = form.querySelector('#room_number');
   var capacity = form.querySelector('#capacity');
-  var buttonSubmit = form.querySelector('.form__submit');
 
   var TYPE_PRICE = {
     flat: 1000,
@@ -48,11 +47,6 @@
     field.style.border = (!field.validity.valid) ? 'thick solid red' : '';
   };
 
-  var onSubmitClick = function () {
-    checkValidity(title);
-    checkValidity(price);
-  };
-
   price.value = 1000;
   capacity.options[2].selected = true;
 
@@ -69,10 +63,17 @@
   });
   roomNumber.addEventListener('change', syncRoomsAndCapacity);
 
-  buttonSubmit.addEventListener('click', onSubmitClick);
-  buttonSubmit.addEventListener('submit', function (evt) {
-    window.backend.save(new FormData(form), window.backend.errorHandler);
-    evt.preventDefault();
-  });
+  var setFormAddress = function () {
+    window.formAddress.value = window.draggableMainPin.getCoords();
+  };
 
+  form.addEventListener('submit', function (evt) {
+    evt.preventDefault();
+    checkValidity(title);
+    checkValidity(price);
+    window.backend.save(new FormData(form), function () {
+      form.reset();
+      setFormAddress();
+    }, window.backend.errorHandler);
+  });
 })();
