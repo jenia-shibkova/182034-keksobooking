@@ -54,10 +54,9 @@
 
       var checkFeatures = function (features) {
         var filteredFeatures = [];
-        checkedFeaturesArray.forEach(function (feature) {
+        return checkedFeaturesArray.every(function (feature) {
           filteredFeatures = filteredFeatures && features.includes(feature);
         });
-        return filteredFeatures;
       };
 
       var housingFilter = function (element) {

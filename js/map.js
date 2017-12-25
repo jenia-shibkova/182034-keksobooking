@@ -19,23 +19,23 @@
   var fieldsets = form.querySelectorAll('fieldset');
 
   var setAttributeDisabled = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].setAttribute('disabled', 'disabled');
-    }
+    fieldsets.forEach(function (fieldset) {
+      fieldset.setAttribute('disabled', 'disabled');
+    });
   };
 
   var removeAttributeDisabled = function () {
-    for (var i = 0; i < fieldsets.length; i++) {
-      fieldsets[i].removeAttribute('disabled');
-    }
+    fieldsets.forEach(function (fieldset) {
+      fieldset.removeAttribute('disabled');
+    });
+
   };
 
   var deletePins = function () {
     var oldPins = mapPins.querySelectorAll('.map__pin:not(.map__pin--main)');
-    for (var i = 0; i < oldPins.length; i++) {
-      mapPins.removeChild(oldPins[i]);
-    }
-
+    oldPins.forEach(function (pin) {
+      mapPins.removeChild(pin);
+    });
   };
 
   var activateMap = function (evt) {

@@ -22,6 +22,7 @@ window.showCard = (function () {
         currentPin.classList.remove(PIN_ACTIVE);
         currentPin = null;
       }
+
       document.removeEventListener('keydown', onPopupEscPress);
     },
 
@@ -29,14 +30,18 @@ window.showCard = (function () {
       window.showCard.closePopup();
       if (evt.currentTarget === window.mainPin || currentPin === evt.currentTarget) {
         return;
-      } else {
-        currentPin = evt.currentTarget;
       }
-      var pinTarget = evt.currentTarget.dataset.pinNumber;
+      currentPin = evt.currentTarget;
+
+      var pinTarget = currentPin.dataset.pinNumber;
       var offerElement = window.cards.createCard(window.listOFOffers[pinTarget]);
       window.tokyoMap.appendChild(offerElement);
       currentPin.classList.add(PIN_ACTIVE);
       document.addEventListener('keydown', onPopupEscPress);
+
+      var popup = offerElement;
+      var popupBtnClose = popup.querySelector('.popup__close');
+      popupBtnClose.addEventListener('click', window.showCard.closePopup);
     }
   };
 })();
