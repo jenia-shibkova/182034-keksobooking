@@ -46,7 +46,7 @@
 
       var loadData = function load(data) {
         makeOffers(data.slice(0, MAX_PINS));
-        window.filter(data, MAX_PINS, makeOffers(data.slice(0, MAX_PINS)));
+        window.filter(data, MAX_PINS, makeOffers);
       };
       // Загрузка данных с сервера
       window.backend.load(loadData, window.backend.errorHandler);
