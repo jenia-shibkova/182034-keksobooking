@@ -2,9 +2,11 @@
 
 (function () {
   var pinHandle = document.querySelector('.map__pin--main');
+
   window.formAddress = document.querySelector('#address');
   var PIN_TAIL = 22;
   var mainPinHeight = pinHandle.offsetHeight + PIN_TAIL;
+
   var mainPinWidth = pinHandle.offsetWidth;
 
   var BOUNDS = {
@@ -55,7 +57,6 @@
         BOUNDS.x.maxX - mainPinWidth / 2) {
         pinHandle.style.left = (pinHandle.offsetLeft - shift.x) + 'px';
       }
-
       window.formAddress.value = 'x: ' + pinLeft + ' y: ' + pinTop;
     };
 
@@ -69,7 +70,7 @@
     window.tokyoMap.addEventListener('mousemove', onMouseMove);
     window.tokyoMap.addEventListener('mouseup', onMouseUp);
   });
-
+  
   window.draggableMainPin = {
     pinGlobal: pinHandle,
     getCoords: function () {
