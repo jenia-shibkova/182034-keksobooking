@@ -18,11 +18,11 @@ window.cards = (function () {
 
   var createFeatures = function (features) {
     var fragmentFeatures = document.createDocumentFragment();
-    for (var i = 0; i < features.length; i++) {
+    features.forEach(function (feature) {
       var listEl = document.createElement('li');
-      listEl.classList.add('feature', 'feature--' + features[i]);
+      listEl.classList.add('feature', 'feature--' + feature);
       fragmentFeatures.appendChild(listEl);
-    }
+    });
     return fragmentFeatures;
   };
 

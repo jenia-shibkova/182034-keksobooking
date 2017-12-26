@@ -53,18 +53,15 @@
       });
 
       var checkFeatures = function (features) {
-        var filteredFeatures = [];
         return checkedFeaturesArray.every(function (feature) {
-          filteredFeatures = filteredFeatures && features.includes(feature);
+          return features.includes(feature);
         });
       };
 
       var housingFilter = function (element) {
-        return ((housingType.value !== 'any') ? element.offer.type === housingType.value : housingType.value ===
-         'any') &&
-          ((housingRooms.value !== 'any') ? element.offer.rooms === parseInt(housingRooms.value, 10) : housingRooms.value === 'any') &&
-          ((housingGuests.value !== 'any') ? element.offer.guests === parseInt(housingGuests.value, 10) : housingGuests.value === 'any') &&
-          (HOUSING_PRICES[housingPrice.value].min <= element.offer.price) && (element.offer.price <= HOUSING_PRICES[housingPrice.value].max) &&
+        return housingType.value === 'any' || element.offer.type === housingType.value &&
+          housingRooms.value === 'any' || element.offer.rooms === housingRooms.value
+          && housingGuests.value === 'any' || element.offer.guests === housingGuests.value && (HOUSING_PRICES[housingPrice.value].min <= element.offer.price) && element.offer.price <= (HOUSING_PRICES[housingPrice.value].max) &&
           checkFeatures(element.offer.features);
       };
 

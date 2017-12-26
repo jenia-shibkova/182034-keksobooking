@@ -6,9 +6,9 @@
     deletePins();
     window.listOFOffers = offers;
     var fragment = document.createDocumentFragment();
-    for (var i = 0; i < offers.length; i++) {
-      fragment.appendChild(window.pin.makePin(offers[i], i));
-    }
+    offers.forEach(function (offer, i) {
+      fragment.appendChild(window.pin.makePin(offer, i));
+    });
     mapPins.appendChild(fragment);
   };
 
